@@ -7,18 +7,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 //任三
-public class ControllerAll extends Application{
+public class Controller2 extends Application{
     public static void main(String[] args) {
         launch(args);
     }
@@ -26,7 +17,7 @@ public class ControllerAll extends Application{
     public void trigger(TextArea textArea) {
        Runnable runnable = new Runnable() {
             public void run() {
-                String[] nums = {"0", "3", "6", "9"};
+                String[] nums = {"2", "5", "8"};
                 TecentOnlinePrizeService tecentOnlinePrizeService = new TecentOnlinePrizeService(textArea, nums);
                 try {
                     tecentOnlinePrizeService.start();
@@ -46,7 +37,7 @@ public class ControllerAll extends Application{
 
     @Override
     public void start(Stage primaryStage) {
-        primaryStage.setTitle("腾讯分分0路智能出号,稳定方案加qq:352560380");
+        primaryStage.setTitle("腾讯分分2路智能出号,稳定方案加qq:352560380");
         Group root = new Group();
         Scene scene = new Scene(root, 450, 200, Color.WHITE);
         int x = 100;

@@ -20,11 +20,17 @@ public class TecentOnlinePrizeService {
         private static int c1 = 0;
         private static int c2 = 0;
 
+        //ren3对子
+        public String[] nums = {"0", "3", "6", "9"};
+
+        private int loseCnt = 0;
+
         StringBuffer redWhiteStatus = new StringBuffer();
         StringBuffer winorLoseStatus = new StringBuffer();
 
-        TecentOnlinePrizeService(TextArea textArea) {
+        TecentOnlinePrizeService(TextArea textArea, String[] nums) {
             this.textArea = textArea;
+            this.nums = nums;
         }
         public void start() throws InterruptedException {
             String s;
@@ -118,7 +124,20 @@ public class TecentOnlinePrizeService {
                     String curNo = qs+"-"+qs1;
                     System.out.println("开奖结果:"+sum%10+","+a[3]+","+a[2]+","+a[1]+","+a[0]);
                     System.out.println("期数:"+qs+"-"+qs1+" "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+" "+s+" "+(cha>=0?"+"+cha:cha));
-                    textArea.setText(curNo  + ":" + prizedNo);
+
+                    Integer[] prizedNoArr = {sum%10, a[3], a[2],a[1],a[0]};
+
+                    boolean isPrized = this.checkisPrized(prizedNoArr);
+                    if(!isPrized) {
+                        loseCnt++;
+                    }
+                    String winOrLoseAlias = (isPrized?"中":"挂");
+                    winorLoseStatus.append(winOrLoseAlias);
+                    if(winorLoseStatus.length() > 100) {
+                        winorLoseStatus.delete(0, winorLoseStatus.length() - 100);
+                    }
+                    String outputText = curNo  + "(" + winOrLoseAlias + ")" + "(" + this.getRedWhiteStatus(winorLoseStatus.toString()) + ")"+ winorLoseStatus.toString()+ ":" + prizedNo;
+                    textArea.setText(outputText);
                 }
 
             } catch (IOException e) {
@@ -128,4 +147,42 @@ public class TecentOnlinePrizeService {
             return cha;
         }
 
+        private boolean checkisPrized(Integer[] kjNos) {
+            for (String num :nums) {
+                int cnt = 0;
+                for(Integer kjNo : kjNos) {
+                    if (num.equals("" + kjNo)) {
+                        cnt++;
+                    }
+                }
+                if(cnt >=2) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        private int whiteCnt = 3;
+        private String getRedWhiteStatus(String winOrLoseStatus) {
+            String result = "";
+            int loseCnt = 0;
+            char[] status = winOrLoseStatus.toCharArray();
+            for(char item : status) {
+                String curStr = String.valueOf(item);
+                if("挂".equals(curStr)) {
+                    loseCnt++;
+
+                    if(loseCnt == whiteCnt + 1) {
+                        result = result + "红-";
+                    }
+                } else {
+                    if (loseCnt > whiteCnt) {
+                        result.replace("红-", "红");
+                    } else {
+                        result = result + "白";
+                    }
+                    loseCnt = 0;
+                }
+            }
+            return  result;
+        }
     }
